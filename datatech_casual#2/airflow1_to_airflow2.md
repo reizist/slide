@@ -39,16 +39,17 @@ Rなんとかという会社で
 
 <!-- _class: lead -->
 
-Airflow1/CloudComposer1を
-Airflow2/CloudComposer2にupgradeした事例を紹介します
+Airflow1.10.15/CloudComposer1を
+Airflow2.2.1/CloudComposer2に
+upgradeした事例を紹介します
 
 ---
 
 <!-- _class: lead -->
 
-Airflowを使っている人✋
-Airflowを使っているがまだ1系の人✋
-は特に参考になるかもしれません
+Airflowを使っている方 ✋
+Airflowを使っているがまだ1系の方 ✋
+は参考になるかもしれません
 
 
 ---
@@ -56,20 +57,21 @@ Airflowを使っているがまだ1系の人✋
 # アジェンダ
 * Airflow2 upgradeの恩恵/モチベーション
 * Airflow2へのupgrade方法
-* SubDagOperatorを辞めることの補足
+* 補足
 
 ---
 
 # Airflow2(Composer2)の恩恵/モチベーション
 * Airflow1系のサポート体制への懸念
   - [GCPにおいても2023/3でAirflow1を非サポート化](https://cloud.google.com/composer/docs/concepts/versioning/composer-versioning-overview?hl=ja#version-deprecation-and-support)
+  - daily job を落とさず毎日朝11時までに必ずデータを揃えたい都合上安心できるサポート体制が必要
 
 ---
 
 # Airflow2(Composer2)の恩恵/モチベーション
 
-* DAGの記述量が減り簡素化する
-  - 後述の理由によりAirflow1の書き方を継続
+* DAGの記述量が減り簡素化できる"TaskFlow API"
+  - 後述の理由によりAirflow1と書き方を継続
 
 <div style="font-size: 2rem;float:left; max-width:50%; width:49%;">
 
@@ -118,7 +120,13 @@ load(order_summary["total_order_value"])
   => <font color="#c26">GKEのAutoPilotによりnode管理が不要に</font>
   - スケジューラのマシンタイプや実行数は指定不可だった
   => <font color="#c26">スケジューラの冗長化が可能になりより堅牢に</font>
+  - daily jobは半日しっかり動き半日ほとんど動かない
+  => <font color="#c26"> インフラリソースの最適化が見込めた </font>
 
+---
+
+# Airflow2(Composer2)の恩恵/モチベーション
+* 総じてdaily jobが動かすtask runnerとしてより安全に/運用コストの削減が見込めた
 
 ---
 
@@ -126,7 +134,7 @@ load(order_summary["total_order_value"])
 
 * 基本は[公式Doc](https://airflow.apache.org/docs/apache-airflow/stable/upgrading-from-1-10/index.html)を読んで順に対応すればOK
   - airflow APIが変わっていたりmodule pathが変わっていたりする
-* その他細かい変更はあるのでAirflow1/Airflow2の両ソースをパッと見られる環境にしておくと安全
+* その他細かい変更はあるのでAirflow1/Airflow2の両ソースをパッと見られる環境にしておくと安心
 
 ---
 
@@ -254,15 +262,17 @@ version2 branchでは `daily_task_for_v2.py`を使う
 
 # 補足: Airflow1=>Airflow2へのデータ移行
 
-* [airflow_db backupのための公式script](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/main/composer/tools/composer_db_transfer.md)があります
+* [airflow_db backupのための公式script](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/main/composer/tools/composer_db_transfer.md)がある
   - ただしAirflow2.2ではexecution_dateカラムが廃止されるなどのschema変更があるので2.0系を挟む必要がある
+  - SubDagを辞める都合上1系データのimportを頑張る必要もないと判断
+    - ただし1系のデータはBQにEmbulkでexportしておいた
 
 ---
 
 # 補足: CloudComposer2の地味なupdate
 
-* backend dbがMySQLからPostgresqlに変わっている
-  - Airflowの仕組み上のretryとは別にSQL経由でqueueing/failedなtaskをrerunする自前の仕組みを作っているので影響した
+* backend dbがMySQLからPostgreSQLに変わっている
+  - Airflowの仕組み上のretryとは別にSQL経由でnon successedなtaskをrerunする自前の仕組みを使っているため影響した
 
 <div style="font-size: 1.0rem">
 
