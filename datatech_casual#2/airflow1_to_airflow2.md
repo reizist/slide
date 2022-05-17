@@ -292,6 +292,15 @@ SELECT unfinished_task.dag_id, task_id, state, operator,
     ...
 ```
 
+---
+
+# 補足: CloudLoggingのsink errorが発生
+* BQのquery実行ログをAudit Logとして残していた
+* (おそらくBigQueryOperatorからBigQueryExecuteQueryOperatorに変わったことで)stderrのschemaが変わった
+  - gcp_audit_log.stderrテーブルの再作成で対処した
+
+
+---
 
 <!-- _class: lead -->
 **ご清聴ありがとうございました**
