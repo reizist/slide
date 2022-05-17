@@ -57,6 +57,7 @@ Airflowを使っているがまだ1系の方 ✋
 # アジェンダ
 * Airflow2 upgradeの恩恵/モチベーション
 * Airflow2へのupgrade方法
+* Airflow2切り替え後の話
 * 補足
 
 ---
@@ -231,11 +232,6 @@ daly_start_task >> xxx_tasks >> daily_end_task
 
 ---
 
-<!-- _class: lead -->
-<img src="deploy_flow.drawio.svg" height="100%" />
-
----
-
 # Airflow2へのupgrade方法
 * master branchでは `daily_task_for_v1.py`を、
 version2 branchでは `daily_task_for_v2.py`を使う
@@ -245,7 +241,20 @@ version2 branchでは `daily_task_for_v2.py`を使う
   - master branchではAirflow1が、
   version2 branchではAirflow2がそれぞれ最新のソースコードで動く状態を担保
 
+---
 
+<!-- _class: lead -->
+<img src="deploy_flow.drawio.svg" height="100%" />
+
+
+
+---
+
+# Airflow2切り替え後の話
+* 障害対応が減り安定稼働した
+  - 昨期2021/10 - 2022/3 で失敗通知を受け取り手動で再実行するなど何らかの人間による対応をした件数: 40件ほど
+  - 今期2022/4 - : 3件
+    - 外部サービスの不調などAirflowとは無関係の症状が主でAirflow起因の対応は0件
 
 ---
 
@@ -269,7 +278,7 @@ version2 branchでは `daily_task_for_v2.py`を使う
 
 ---
 
-# 補足: CloudComposer2の地味なupdate
+# 補足: CloudComposer2の地味な変更点
 
 * backend dbがMySQLからPostgreSQLに変わっている
   - Airflowの仕組み上のretryとは別にSQL経由でnon successedなtaskをrerunする自前の仕組みを使っているため影響した
@@ -299,6 +308,13 @@ SELECT unfinished_task.dag_id, task_id, state, operator,
 * (おそらくBigQueryOperatorからBigQueryExecuteQueryOperatorに変わったことで)stderrのschemaが変わった
   - gcp_audit_log.stderrテーブルの再作成で対処した
 
+---
+
+# まとめ
+* 堅牢化/コスト削減の目的で
+Airflow2/CloudComposer2にupgradeした
+* 障害対応数は減って安定化した
+* `celery/worker_concurrency` 調整によるインフラリソースの最適化を今後予定
 
 ---
 
