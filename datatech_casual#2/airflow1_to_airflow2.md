@@ -126,7 +126,7 @@ load(order_summary["total_order_value"])
 ---
 
 # Airflow2(Composer2)の恩恵/モチベーション
-* 総じてdaily jobが動かすtask runnerとしてより安全に/運用コストの削減が見込めた
+* 総じてdaily jobを動かすtask runnerとしてより安全に/運用コストの削減が見込めた
 
 ---
 
