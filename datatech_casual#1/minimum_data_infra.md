@@ -88,7 +88,7 @@ Rなんとかという会社で
 
 ---
 <!-- _class: lead -->
-<img src="architecture.svg" height="100%" />
+<img src="architecture.drawio.svg" height="100%" />
 
 ---
 
